@@ -32,7 +32,7 @@ https://github.com/OpenGene/fastp/issues/23
 
 
 Protocol by UMIERRORCONRRECT
-
+https://github.com/tobbeost/umierrorcorrect
 #2. Mapping
 
         module load UHTS/Aligner/bwa-mem2/2.2.0
