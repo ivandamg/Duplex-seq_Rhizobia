@@ -43,6 +43,12 @@ Protocol by UMIERRORCONRRECT
 
 #3. UMI clustering
     
+ 
+                    #in cluster      
+           sbatch --partition=pall --job-name=UMIERCOR --time=24:00:00 --mem-per-cpu=64G --cpus-per-task=18 --output=UMIERCOR.out --error=UMIERCOR.error --mail-type=END,FAIL --wrap "umi_error_correct.py -o /data/projects/p495_SinorhizobiumMeliloti/TEST/02_UMIClustering -b /data/projects/p495_SinorhizobiumMeliloti/TEST/01_Mapping/TESTE.sorted.bam -r /data/projects/p495_SinorhizobiumMeliloti/01_REF/Sinorhizobium_meliloti_2011_ASM34606v1_genomic.fna -s TESTE2"  
+            
+            module load UHTS/Analysis/salmon/0.11.2; salmon quant -i /data/projects/p782_RNA_seq_Argania_spinosa/02_SalmonQuantification/argane_index -l A -1 $FILE -2 $(echo $FILE | cut -d'_' -f1)_2_clean.fastq.gz -p 8 --validateMappings -o /data/projects/p782_RNA_seq_Argania_spinosa/02_SalmonQuantification/$(echo $FILE | cut -d'_' -f1)_quant 
+        
         umi_error_correct.py -o /data/projects/p495_SinorhizobiumMeliloti/TEST/02_UMIClustering -b /data/projects/p495_SinorhizobiumMeliloti/TEST/01_Mapping/TESTE.sorted.bam -r /data/projects/p495_SinorhizobiumMeliloti/01_REF/Sinorhizobium_meliloti_2011_ASM34606v1_genomic.fna -s TESTE2
 
 
