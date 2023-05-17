@@ -31,8 +31,8 @@ https://github.com/OpenGene/fastp/issues/23
           ~/00_Software/fastp -i /data/projects/p495_SinorhizobiumMeliloti/TEST/Argon1_NEB_L1_R3_001_QN2XT8O0reaH.fastq.gz -I /data/projects/p495_SinorhizobiumMeliloti/TEST/Argon1_NEB_L1_R2_001_xijpGOJF0jXL.fastq.gz -o /data/projects/p495_SinorhizobiumMeliloti/TEST/R2.out.fq -O /data/projects/p495_SinorhizobiumMeliloti/TEST/R3.out.fq --umi --umi_loc=read2 --umi_len=11 -Q -A -L -w 1 -u 100 -n 11 -Y 100 -G
 
 
-Protocol by UMIERRORCONRRECT
-https://github.com/tobbeost/umierrorcorrect
+Protocol by [UMIERRORCONRRECT](https://github.com/stahlberggroup/umierrorcorrect/)
+
 #2. Mapping
 
         module load UHTS/Aligner/bwa-mem2/2.2.0
