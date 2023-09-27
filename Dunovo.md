@@ -25,5 +25,26 @@ We can now delete the tmp files.
      
 # 3. Mapping to Rhizobia
 
+Index reference 
+
+              sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)Pi --time=0-10:30:00 --mem-per-cpu=12G --ntasks=2 --cpus-per-task=1 --output=index.out --error=index.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/01_trimmedfiles/ ; /home/imateusgonzalez/00_Software/bwa-mem2-2.2.1_x64-linux/bwa-mem2 index  p_ctg_oric.fasta "
+
+
+
+
+Map to reference genome
+
+      for FILE in $(ls Argon*_L*_R1_UMI_clean.1.fq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)_bw --time=0-05:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_bwa-mem2.out --error=$(echo $FILE | cut -d'_' -f1,2)_bwa-mem2.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/01_trimmedfiles; /home/imateusgonzalez/00_Software/bwa-mem2-2.2.1_x64-linux/bwa-mem2 mem -t 8 p_ctg_oric.fasta $FILE $(echo $FILE | cut -d'_' -f1,2,3,4)_clean.2.fq.gz > $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Rhizobia.sam; samtools view -bS $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Rhizobia.sam > $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Rhizobia.bam; mv $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Rhizobia.bam /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/02_MapRhizobiaDirect/ ;  rm $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Rhizobia.sam "; sleep  1; done
+
+Sorting
+
+
+Indexing
+
+
 
 # 4. Deduplication 
+
+Use UMI-tools to deduplicate the bam file. https://umi-tools.readthedocs.io/en/latest/QUICK_START.html#step-3--extract-the-umis
+
+umi_tools dedup -I example.bam --paired --output-stats=deduplicated -S deduplicated.bam
