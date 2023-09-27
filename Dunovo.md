@@ -18,6 +18,12 @@ We can now delete the tmp files.
             rm *tmp*
 
 
-# 2. demultiplex with fastp
+# 2. Trimming and quality filter
+
+            for FILE in $(ls *_R1_UMI_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3,4)_bbduk --time=01:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3,4)_bbduk.out  --mail-type=END,FAIL --wrap "module load UHTS/Analysis/BBMap/38.91; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp ;  bbduk.sh in=$FILE in2=$(echo $FILE | cut -d'_' -f1,2)_R3_UMI_fastq.gz out=/data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/01_trimmedfiles/$(echo $FILE | cut -d'_' -f1,2,3,4)_clean.1.fq.gz out2=/data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/01_trimmedfiles/$(echo $FILE | cut -d'_' -f1,2,3,4)_clean.2.fq.gz ref=adapters ktrim=r k=23 mink=11 hdist=1 tpe tbo qtrim=r trimq=24"   ; sleep 1; done
 
      
+# 3. Mapping to Rhizobia
+
+
+# 4. Deduplication 
