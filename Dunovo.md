@@ -17,13 +17,18 @@ We can now delete the tmp files.
 
             rm *tmp*
 
+# 2. move Barcode from info header to head of read.
 
-# 2. Trimming and quality filter
+      for i in $(ls *_L*_R*_UMI_fastq.gz); do echo $i; zcat $i |sed -E '/^@.*1016:/ {N; s/(1016:)(.{11})(.*\n)(.+)/\1\3\2\4/}' | awk 'NR%4==0{$0="FFFFFFFFFFF" $0}1' > 04_dunovo/$(echo $i |cut -d'_' -f1,2,3)_UMI2_fastq.gz ; done
+
+
+
+# 3. Trimming and quality filter
 
             for FILE in $(ls *_R1_UMI_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3,4)_bbduk --time=01:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3,4)_bbduk.out  --mail-type=END,FAIL --wrap "module load UHTS/Analysis/BBMap/38.91; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp ;  bbduk.sh in=$FILE in2=$(echo $FILE | cut -d'_' -f1,2)_R3_UMI_fastq.gz out=/data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/01_trimmedfiles/$(echo $FILE | cut -d'_' -f1,2,3,4)_clean.1.fq.gz out2=/data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/01_trimmedfiles/$(echo $FILE | cut -d'_' -f1,2,3,4)_clean.2.fq.gz ref=adapters ktrim=r k=23 mink=11 hdist=1 tpe tbo qtrim=r trimq=24"   ; sleep 1; done
 
      
-# 3. Mapping to Rhizobia
+# 4. Mapping to Rhizobia
 
 Index reference 
 
@@ -41,7 +46,7 @@ Sorting and indexing
             for FILE in $(ls Argon1_L1_bwa-mem2_Rhizobia.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/02_MapRhizobiaDirect; samtools sort $FILE -o $(echo $FILE | cut -d'.' -f1)_Sorted.bam; samtools index $(echo $FILE | cut -d'.' -f1)_Sorted.bam; "; sleep 1; done
 
 
-# 4. Deduplication 
+# 5. Deduplication 
 
 Use UMI-tools to deduplicate the bam file. https://umi-tools.readthedocs.io/en/latest/QUICK_START.html#step-3--extract-the-umis
 
