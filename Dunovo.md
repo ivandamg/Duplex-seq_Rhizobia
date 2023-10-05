@@ -17,7 +17,7 @@ We can now delete the tmp files.
 
             rm *tmp*
 
-# 2. move Barcode from info header to head of read.
+# 2. move Barcode from info header to head of read. NOT WORKNG FOR all CHANGE PART of 1016 and chande x field after xXX
 
       for i in $(ls *_L*_R*_UMI_fastq.gz); do echo $i; zcat $i |sed -E '/^@.*1016:/ {N; s/(1016:)(.{11})(.*\n)(.+)/\1\3\2\4/}' | awk 'NR%4==0{$0="FFFFFFFFFFF" $0}1' > 04_dunovo/$(echo $i |cut -d'_' -f1,2,3)_UMI2_fastq.gz ; done
 
