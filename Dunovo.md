@@ -46,4 +46,4 @@ Sorting and indexing
 
 Use UMI-tools to deduplicate the bam file. https://umi-tools.readthedocs.io/en/latest/QUICK_START.html#step-3--extract-the-umis
 
-umi_tools dedup -I example.bam --paired --output-stats=deduplicated -S deduplicated.bam
+        for FILE in $(ls Argon1_L2_bwa-mem2_Rhizobia_Sorted.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "conda activate rhizo; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/; umi_tools dedup -I $FILE --output-stats=$(echo $FILE | cut -d'_' -f1,2)_deduplicated -S $(echo $FILE | cut -d'_' -f1,2)_deduplicated.bam "; sleep 1; done
