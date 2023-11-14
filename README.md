@@ -77,7 +77,9 @@ Use UMI-tools to deduplicate the bam file. https://umi-tools.readthedocs.io/en/l
         for FILE in $(ls *Sorted_NewName.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "conda activate rhizo; module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/; samtools index $FILE; umi_tools dedup -I $FILE --paired --output-stats=$(echo $FILE | cut -d'_' -f1,2)_deduplicated -S $(echo $FILE | cut -d'_' -f1,2)_deduplicated.bam "; sleep 1; done
 
 
+# 6. Variant calling
 
+        for FILE in $(ls *deduplicated.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST2 --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/; module add UHTS/Analysis/samtools/1.10; module load UHTS/Analysis/EPACTS/3.2.6; bcftools mpileup --threads 8 -a AD,DP,SP -f p_ctg_oric.fasta $FILE | bcftools call --threads 8 -mv -Ov -o $(echo $FILE | cut -d'_' -f1,2).vcf; bcftools view --threads 8 --exclude 'QUAL <= 30 ' $(echo $FILE | cut -d'_' -f1,2).vcf -Oz -o $(echo $FILE | cut -d'_' -f1,2)_bcftoolsV1_Q30.vcf.gz"   ; sleep 1; done
 
 
 
