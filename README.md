@@ -48,7 +48,7 @@ We can now delete the tmp files.
 Modify read name 
 |sed -E 's/^(@[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+):/\1_/g'|
 
-          for FILE in $(ls *_L*_R*_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3)fastp --time=0-01:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3)_fastp.out --error=$(echo $FILE | cut -d'_' -f1,3)_fastp.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04*/; zcat $FILE |sed -E 's/^(@[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+):/\1_/g'| gzip -f > $(echo $FILE | cut -d'_' -f1,2,3,4)_NewName_fastq.gz "; sleep  1; done
+          for FILE in $(ls *_L*_R*_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3)fastp --time=0-01:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3)_fastp.out --error=$(echo $FILE | cut -d'_' -f1,3)_fastp.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/; zcat $FILE |sed -E 's/^(@[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+):/\1_/g'| gzip -f > $(echo $FILE | cut -d'_' -f1,2,3,4)_NewName_fastq.gz "; sleep  1; done
 
 
 
