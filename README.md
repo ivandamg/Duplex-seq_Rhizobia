@@ -33,11 +33,11 @@ Barcode is in file R2.
 
 We first add the barcode to the header to the foward read (R1)
 
-                  for FILE in $(ls *_L*_R1_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3)fastp --time=0-01:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3)_fastp.out --error=$(echo $FILE | cut -d'_' -f1,3)_fastp.error --mail-type=END,FAIL --wrap " cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/01_beforeTrim; ~/00_Software/fastp -i $FILE -I $(echo $FILE | cut -d'_' -f1,2)_R2_fastq.gz -o /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/$(echo $FILE | cut -d'_' -f1,2,3)_UMI_fastq.gz -O /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/$(echo $FILE | cut -d'_' -f1,2)_tmp.gz --umi --umi_loc=read2 --umi_len=11 -Q -A -L -w 1"; sleep  1; done
+                  for FILE in $(ls *_L*_R1_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3)fastp --time=0-01:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3)_fastp.out --error=$(echo $FILE | cut -d'_' -f1,3)_fastp.error --mail-type=END,FAIL --wrap " cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/01_beforeTrim; ~/00_Software/fastp -i $FILE -I $(echo $FILE | cut -d'_' -f1,2)_R2_fastq.gz -o /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/$(echo $FILE | cut -d'_' -f1,2,3)_UMI_fastq.gz -O /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/$(echo $FILE | cut -d'_' -f1,2)_tmp.gz --umi --umi_loc=read2 --umi_len=11 -Q -A -L -w 1 --umi_prefix UMI "; sleep  1; done
 
 We then add the barcode to the header of the reverse read (R3)
 
-           for FILE in $(ls *_L*_R3_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3)fastp --time=0-01:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3)_fastp.out --error=$(echo $FILE | cut -d'_' -f1,3)_fastp.error --mail-type=END,FAIL --wrap " cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/01_beforeTrim; ~/00_Software/fastp -i $FILE -I $(echo $FILE | cut -d'_' -f1,2)_R2_fastq.gz -o /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/$(echo $FILE | cut -d'_' -f1,2,3)_UMI_fastq.gz -O /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/$(echo $FILE | cut -d'_' -f1,2)_tmp2.gz --umi --umi_loc=read2 --umi_len=11 -Q -A -L -w 1"; sleep  1; done
+           for FILE in $(ls *_L*_R3_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3)fastp --time=0-01:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3)_fastp.out --error=$(echo $FILE | cut -d'_' -f1,3)_fastp.error --mail-type=END,FAIL --wrap " cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/01_beforeTrim; ~/00_Software/fastp -i $FILE -I $(echo $FILE | cut -d'_' -f1,2)_R2_fastq.gz -o /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/$(echo $FILE | cut -d'_' -f1,2,3)_UMI_fastq.gz -O /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/$(echo $FILE | cut -d'_' -f1,2)_tmp2.gz --umi --umi_loc=read2 --umi_len=11 -Q -A -L -w 1 --umi_prefix UMI "; sleep  1; done
 
 
 We can now delete the tmp files.
@@ -48,11 +48,33 @@ We can now delete the tmp files.
 Modify read name 
 |sed -E 's/^(@[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+):/\1_/g'|
 
-          for FILE in $(ls *_L*_R*_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3)fastp --time=0-01:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3)_fastp.out --error=$(echo $FILE | cut -d'_' -f1,3)_fastp.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/; zcat $FILE |sed -E 's/^(@[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+):/\1_/g'| gzip -f > $(echo $FILE | cut -d'_' -f1,2,3,4)_NewName_fastq.gz "; sleep  1; done
+          for FILE in $(ls Argon1_L1_R*_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3)fastp --time=0-01:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3)_fastp.out --error=$(echo $FILE | cut -d'_' -f1,3)_fastp.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/; zcat $FILE |sed -E 's/(:[^:]+) /_\1 /' | sed 's/_:/_/'| gzip -f > $(echo $FILE | cut -d'_' -f1,2,3,4)_NewName_fastq.gz "; sleep  1; done
+
+sed -E 's/(:[^:]+) /_\1 /' | sed 's/_:/_/'
+
+# 3. Mapping to Medicago
+
+Index reference 
+
+              sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)Pi --time=0-10:30:00 --mem-per-cpu=12G --ntasks=2 --cpus-per-task=1 --output=index.out --error=index.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/03_Mapped_Medicago ; /home/imateusgonzalez/00_Software/bwa-mem2-2.2.1_x64-linux/bwa-mem2 index  Medicago_truncatula.fa "
 
 
 
-# 3. Mapping to Rhizobia
+Map to reference genome
+
+          for FILE in $(ls Argon1_L1_R1_UMI_NewName_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)_bw --time=0-05:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_bwa-mem2.out --error=$(echo $FILE | cut -d'_' -f1,2)_bwa-mem2.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/; /home/imateusgonzalez/00_Software/bwa-mem2-2.2.1_x64-linux/bwa-mem2 mem -t 8 /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/03_Mapped_Medicago/Medicago_truncatula.fa $FILE $(echo $FILE | cut -d'_' -f1,2)_R3_UMI_NewName_fastq.gz > $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Medicago.sam; samtools view -bS $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Medicago.sam > $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Medicago.bam; mv $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Medicago.bam /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/03_Mapped_Medicago/ ;  rm $(echo $FILE | cut -d'_' -f1,2)_bwa-mem2_Medicago.sam "; sleep  1; done
+
+Sorting and indexing
+
+            for FILE in $(ls Argon1_L1_bwa-mem2_Rhizobia.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04*/; samtools sort $FILE -o $(echo $FILE | cut -d'.' -f1)_Sorted.bam; samtools index $(echo $FILE | cut -d'.' -f1)_Sorted.bam; "; sleep 1; done
+
+
+Extract unmapped reads
+
+          samtools view -b -f 4 $(echo $FILE | cut -d'.' -f1)_Sorted.bam > $(echo $FILE | cut -d'.' -f1)_MtruncatulaUnmapped.bam; home/imateusgonzalez/00_Software/bedtools2/bin/bamToFastq -i $(echo $FILE | cut -d'.' -f1)_MtruncatulaUnmapped.bam -fq $(echo $FILE | cut -d'.' -f1)_MtruncatulaUnmapped.1.fq -fq2 $(echo $FILE | cut -d'.' -f1)_MtruncatulaUnmapped.2.fq; /home/imateusgonzalez/00_Software/bedtools2/bin/bamToFastq -i $(echo $FILE | cut -d'.' -f1)_MtruncatulaUnmapped.bam -fq $(echo $FILE | cut -d'.' -f1)_MtruncatulaUnmapped.1.fq -fq2 $(echo $FILE | cut -d'.' -f1)_MtruncatulaUnmapped.2.fq;
+
+
+# 4. Mapping to Rhizobia
 
 Index reference 
 
