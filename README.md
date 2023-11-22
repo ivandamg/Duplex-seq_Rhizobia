@@ -44,14 +44,6 @@ We can now delete the tmp files.
 
             rm *tmp*
 
-
-#Modify read name 
-#|sed -E 's/^(@[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+:[^:]+):/\1_/g'|
-
- #         for FILE in $(ls Argon1_L1_R*_fastq.gz); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,3)fastp --time=0-01:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,3)_fastp.out --error=$(echo $FILE | cut -d'_' -f1,3)_fastp.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/02_WithUMI/; zcat $FILE |sed -E 's/(:[^:]+) /_\1 /' | sed 's/_:/_/'| gzip -f > $(echo $FILE | cut -d'_' -f1,2,3,4)_NewName_fastq.gz "; sleep  1; done
-
-#sed -E 's/(:[^:]+) /_\1 /' | sed 's/_:/_/'
-
 # 3. Mapping to Medicago
 
 Index reference 
@@ -73,9 +65,9 @@ Extract unmapped reads
 
           for FILE in $(ls Argon1_L1_bwa-mem2_Medicago_Sorted.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/03_Mapped_Medicago/; samtools view -b -f 4 $FILE > $(echo $FILE | cut -d'.' -f1)_MedicagoUnmapped.bam; sh ~/00_Software/bedtools2/bin/bamToFastq -i $(echo $FILE | cut -d'.' -f1)_MedicagoUnmapped.bam -fq $(echo $FILE | cut -d'.' -f1)_MedicagoUnmapped.1.fq -fq2 $(echo $FILE | cut -d'.' -f1)_MedicagoUnmapped.2.fq"; sleep 1; done
 
-for FILE in $(ls Argon1_L1_bwa-mem2_Medicago_Sorted_MedicagoUnmapped.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/03_Mapped_Medicago/; sh ~/00_Software/bedtools2/bin/bamToFastq -i $FILE -fq $(echo $FILE | cut -d'_' -f1,2)_MedicagoUnmapped.1.fq -fq2 $(echo $FILE | cut -d'_' -f1,2)_MedicagoUnmapped.2.fq"; sleep 1; done
+        for FILE in $(ls Argon1_L1_bwa-mem2_Medicago_Sorted_MedicagoUnmapped.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/03_Mapped_Medicago/; sh ~/00_Software/bedtools2/bin/bamToFastq -i $FILE -fq $(echo $FILE | cut -d'_' -f1,2)_MedicagoUnmapped.1.fq -fq2 $(echo $FILE | cut -d'_' -f1,2)_MedicagoUnmapped.2.fq"; sleep 1; done
 
-for FILE in $(ls Argon1_L1_MedicagoUnmapped.*.fq); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/03_Mapped_Medicago/; gzip $FILE "; sleep 1; done
+        for FILE in $(ls Argon1_L1_MedicagoUnmapped.*.fq); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/03_Mapped_Medicago/; gzip $FILE "; sleep 1; done
 
 # 4. Mapping to Rhizobia
 
@@ -94,10 +86,6 @@ Sorting and indexing
 
             for FILE in $(ls Argon1_L1_bwa-mem2_Rhizobia.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04_Mapped_Rhizobia/; samtools sort $FILE -o $(echo $FILE | cut -d'.' -f1)_Sorted.bam; samtools index $(echo $FILE | cut -d'.' -f1)_Sorted.bam; "; sleep 1; done
 
-Change read names
-
-
-            for FILE in $(ls Argon1_L1_bwa-mem2_Rhizobia.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST --time=0-03:00:00 --mem-per-cpu=64G --ntasks=2 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_ST.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/samtools/1.10; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04*/; samtools sort $FILE -o $(echo $FILE | cut -d'.' -f1)_Sorted.bam; samtools index $(echo $FILE | cut -d'.' -f1)_Sorted.bam; "; sleep 1; done
 
 # 5. Deduplication 
 
@@ -115,7 +103,7 @@ ex. https://www.biostars.org/p/279951/
 
 # 6. Variant calling
 
-        for FILE in $(ls *deduplicated.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST2 --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/10_fastp/; module add UHTS/Analysis/samtools/1.10; module load UHTS/Analysis/EPACTS/3.2.6; bcftools mpileup --threads 8 -a AD,DP,SP -f p_ctg_oric.fasta $FILE | bcftools call --threads 8 -mv -Ov -o $(echo $FILE | cut -d'_' -f1,2).vcf; bcftools view --threads 8 --exclude 'QUAL <= 30 ' $(echo $FILE | cut -d'_' -f1,2).vcf -Oz -o $(echo $FILE | cut -d'_' -f1,2)_bcftoolsV1_Q30.vcf.gz"   ; sleep 1; done
+        for FILE in $(ls *deduplicated.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST2 --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04_Mapped_Rhizobia/; module add UHTS/Analysis/samtools/1.10; module load UHTS/Analysis/EPACTS/3.2.6; bcftools mpileup --threads 8 -a AD,DP,SP -f p_ctg_oric.fasta $FILE | bcftools call --threads 8 -mv -Ov -o $(echo $FILE | cut -d'_' -f1,2).vcf; bcftools view --threads 8 --exclude 'QUAL <= 30 ' $(echo $FILE | cut -d'_' -f1,2).vcf -Oz -o $(echo $FILE | cut -d'_' -f1,2)_bcftoolsV1_Q30.vcf.gz"   ; sleep 1; done
 
 
 
