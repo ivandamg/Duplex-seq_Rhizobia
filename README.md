@@ -106,7 +106,22 @@ ex. https://www.biostars.org/p/279951/
         for FILE in $(ls *deduplicated.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST2 --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04_Mapped_Rhizobia/; module add UHTS/Analysis/samtools/1.10; module load UHTS/Analysis/EPACTS/3.2.6; bcftools mpileup --threads 8 -a AD,DP,SP -f p_ctg_oric.fasta $FILE | bcftools call --threads 8 -mv -Ov -o $(echo $FILE | cut -d'_' -f1,2).vcf; bcftools view --threads 8 --exclude 'QUAL <= 30 ' $(echo $FILE | cut -d'_' -f1,2).vcf -Oz -o $(echo $FILE | cut -d'_' -f1,2)_bcftoolsV1_Q30.vcf.gz"   ; sleep 1; done
 
 
+# 6b. Variant calling freebayes
 
+
+
+Fix bam files with picard AddOrReplaceReadGroups Picard tools
+
+           for FILE in $(ls *deduplicated.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)ST2 --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_ST.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04_Mapped_Rhizobia; module add UHTS/Analysis/picard-tools/1.127;picard-tools AddOrReplaceReadGroups I=$FILE O=$(echo $FILE | cut -d'.' -f1)_Fixed.bam RGID=4 RGLB=lib1 RGPL=illumina RGPU=unit1 RGSM=20"   ; sleep 1; done
+
+Variant calling freebayes
+
+            for FILE in $(ls Argon1_L1*_Fixed.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)_FB --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_FB.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "module add UHTS/Analysis/freebayes/1.2.0; /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04_Mapped_Rhizobia;  ~/00_Software/freebayes/scripts/freebayes-parallel --fasta-reference p_ctg_oric.fasta -C 10 $FILE > $(echo $FILE | cut -d'_' -f1,2,3)_FreeBayes.vcf"   ; sleep 1; done
+
+
+filter variant calling
+
+           for FILE in $(ls *_FreeBayes.vcf); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)_FB --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_FB.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/vcftools/0.1.15; cd /data/projects/p495_SinorhizobiumMeliloti/03_MasterSummerProject/03_pascal_reanalysis;  vcftools --vcf $FILE --minQ 20 --recode --recode-INFO-all --out $(echo $FILE | cut -d'_' -f1,2,3,4)_q20.vcf"   ; sleep 1; done
 
 
 
