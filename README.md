@@ -121,7 +121,7 @@ Variant calling freebayes
 
 filter variant calling
 
-           for FILE in $(ls *_FreeBayes.vcf); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)_FB --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_FB.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/vcftools/0.1.15; cd /data/projects/p495_SinorhizobiumMeliloti/03_MasterSummerProject/03_pascal_reanalysis;  vcftools --vcf $FILE --minQ 20 --recode --recode-INFO-all --out $(echo $FILE | cut -d'_' -f1,2,3,4)_q20.vcf"   ; sleep 1; done
+           for FILE in $(ls *_FreeBayes.vcf); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)_FB --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_FB.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "module load UHTS/Analysis/vcftools/0.1.15; cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04_Mapped_Rhizobia;  vcftools --vcf $FILE --minQ 30 --recode --recode-INFO-all --out $(echo $FILE | cut -d'.' -f1)_Q30.vcf"   ; sleep 1; done
 
 
 
