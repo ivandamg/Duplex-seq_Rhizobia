@@ -116,7 +116,7 @@ Fix bam files with picard AddOrReplaceReadGroups Picard tools
 
 Variant calling freebayes
 
-            for FILE in $(ls Argon1_L1*_Fixed.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)_FB --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_FB.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "module add UHTS/Analysis/freebayes/1.2.0; /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04_Mapped_Rhizobia;  ~/00_Software/freebayes/scripts/freebayes-parallel --fasta-reference p_ctg_oric.fasta -C 10 $FILE > $(echo $FILE | cut -d'_' -f1,2,3)_FreeBayes.vcf"   ; sleep 1; done
+            for FILE in $(ls *_Fixed.bam); do echo $FILE; sbatch --partition=pall --job-name=$(echo $FILE | cut -d'_' -f1,2)_FB --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_FB.out --error=$(echo $FILE | cut -d'_' -f1,2)_FB.error --mail-type=END,FAIL --wrap "module add UHTS/Analysis/freebayes/1.2.0; /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04_Mapped_Rhizobia; freebayes --fasta-reference p_ctg_oric.fasta -C 10 $FILE > $(echo $FILE | cut -d'_' -f1,2,3)_FreeBayes.vcf"   ; sleep 1; done
 
 
 filter variant calling
