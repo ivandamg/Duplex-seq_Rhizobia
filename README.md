@@ -126,7 +126,13 @@ filter variant calling
 
 
 
+# 7. Haplotype phasing
 
+Prepare for phasing: index bamfiles, conda activate whatshap-env in shell before launching jobs
+
+Phase the variants with reference and bamfile with whatshap https://whatshap.readthedocs.io/en/latest/guide.html#input-data-requirements
+
+           for FILE in $(ls *_deduplicated.bam); do echo $FILE; sbatch --partition=pshort_el8 --job-name=$(echo $FILE | cut -d'_' -f1,2)WhatsHap --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_WhatsHap.out --error=$(echo $FILE | cut -d'_' -f1,2)_WhatsHap.error --mail-type=END,FAIL --wrap " cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/05_Dedup; conda activate whatshap-env ; module load SAMtools; whatshap phase -o $(echo $FILE | cut -d'_' -f1,2)_Phased.vcf --reference=p_ctg_oric.fasta /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/05_Dedup/$(echo $FILE | cut -d'_' -f1,2)_bcftoolsV1_Q30.vcf /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/04_Mapped_Rhizobia/$FILE"; done
 
 
 
