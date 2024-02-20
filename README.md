@@ -135,6 +135,19 @@ Phase the variants with reference and bamfile with whatshap https://whatshap.rea
            for FILE in $(ls Argon*_*_deduplicated.bam); do echo $FILE; sbatch --partition=pshort_el8 --job-name=$(echo $FILE | cut -d'_' -f1,2)WhatsHap --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_WhatsHap.out --error=$(echo $FILE | cut -d'_' -f1,2)_WhatsHap.error --mail-type=END,FAIL --wrap " cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/06_Haplotypes; conda activate whatshap-env ; whatshap phase -o $(echo $FILE | cut -d'_' -f1,2)_Phased.vcf --reference=p_ctg_oric.fasta $(echo $FILE | cut -d'_' -f1,2)_bcftoolsV1_Q30.vcf $FILE --ignore-read-groups "; done
 
 
+# 8. Visualize phased BAM
+
+Index phased VCF
+
+          for FILE in $(ls *_Phased.vcf); do echo $FILE; sbatch --partition=pshort_el8 --job-name=$(echo $FILE | cut -d'_' -f1,2)BGZIP --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_WhatsHap.out --error=$(echo $FILE | cut -d'_' -f1,2)_WhatsHap.error --mail-type=END,FAIL --wrap " cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/06_Haplotypes; bgzip -c $FILE > $(echo $FILE).gz; tabix -p vcf $(echo $FILE).gz "; done 
+
+Create TAGs on phased BAM
+
+          for FILE in $(ls Argon*_*_deduplicated.bam); do echo $FILE; sbatch --partition=pshort_el8 --job-name=$(echo $FILE | cut -d'_' -f1,2)WhatsHap --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_WhatsHap.out --error=$(echo $FILE | cut -d'_' -f1,2)_WhatsHap.error --mail-type=END,FAIL --wrap " cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/06_Haplotypes; conda activate whatshap-env ; whatshap haplotag -o $(echo $FILE | cut -d'_' -f1,2)_haplotagged.bam --reference p_ctg_oric.fasta $(echo $FILE | cut -d'_' -f1,2)_Phased.vcf.gz $FILE --ignore-read-groups"; done
+
+Index Phased BAM for IGV view
+
+          for FILE in $(ls *_haplotagged.bam); do echo $FILE; sbatch --partition=pshort_el8 --job-name=$(echo $FILE | cut -d'_' -f1,2)Index --time=0-03:00:00 --mem-per-cpu=64G --ntasks=8 --cpus-per-task=1 --output=$(echo $FILE | cut -d'_' -f1,2)_WhatsHap.out --error=$(echo $FILE | cut -d'_' -f1,2)_index.error --mail-type=END,FAIL --wrap " cd /data/projects/p495_SinorhizobiumMeliloti/02_DuplexSeq/06_Haplotypes; module load SAMtools; samtools index $FILE"; done
 
 
 
